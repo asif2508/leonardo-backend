@@ -30,3 +30,34 @@ module.exports.sendEmail = (receiver, code, name, id ) => {
     });
   });
 };
+
+module.exports.sendPasswordReset = (receiver, password, name) => {
+  return new Promise((resolve, reject) => {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        // user: "securesally@gmail.com",
+        user: "rakibul4210@gmail.com",
+        pass: "hodbryzkrewnhoff",
+      },
+    });
+    
+    const mail_config = {
+      from: "rakibul4210@gmail.com",
+      to: receiver,
+      subject: "Password Reset from MIISTICO",
+      text: `Hey ${name},
+      Here is your Password: ${password}
+      Best Regards,
+      MIISTICO`,
+    };
+
+    transporter.sendMail(mail_config, (error, info) => {
+      if (error) {
+        console.log(error);
+        return reject({ message: "An error has occured!" });
+      }
+      return resolve({ message: "Email has been sent successfully!" });
+    });
+  });
+};

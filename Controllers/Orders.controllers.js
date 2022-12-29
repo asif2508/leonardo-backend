@@ -12,7 +12,7 @@ module.exports.addOrders = async (req, res) => {
     });
   } catch (err) {
     res.status(200).json({
-      message: err,
+      message: err.message,
       status: false,
     });
   }
@@ -28,7 +28,7 @@ module.exports.getOrder = async (req, res)=>{
         });
       } catch (err) {
         res.status(200).json({
-          message: err,
+          message: err.message,
           status: false,
         });
       }
@@ -43,7 +43,7 @@ module.exports.getAllOrders = async (req, res)=>{
         });
       } catch (err) {
         res.status(200).json({
-          message: err,
+          message: err.message,
           status: false,
         });
       }

@@ -11,7 +11,7 @@ module.exports.getService = async (req, res) => {
     });
   } catch (err) {
     res.status(200).json({
-      message: err,
+      message: err.message,
       status: false,
     });
   }
@@ -28,7 +28,7 @@ module.exports.getServiceById = async (req, res) => {
     });
   } catch (err) {
     res.status(200).json({
-      message: err,
+      message: err.message,
       status: false,
     });
   }
@@ -46,7 +46,7 @@ module.exports.updatedServices = async (req, res) => {
     });
   } catch (err) {
     res.status(200).json({
-      message: err,
+      message: err.message,
       status: false,
     });
   }

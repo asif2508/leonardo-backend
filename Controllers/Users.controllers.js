@@ -1,5 +1,5 @@
 const User = require("../Models/UserModel");
-const { sendEmail } = require("../Utils/sendEmail");
+const { sendEmail, sendPasswordReset } = require("../Utils/sendEmail");
 
 module.exports.registerUser = async (req, res) => {
   try {
@@ -19,7 +19,7 @@ module.exports.registerUser = async (req, res) => {
         })
         .catch((err) => {
           res.status(200).json({
-            message: err.message,
+            message: err.message.message,
             data: result,
             status: false,
           });
@@ -33,7 +33,7 @@ module.exports.registerUser = async (req, res) => {
     }
   } catch (err) {
     res.status(200).json({
-      message: err,
+      message: err.message,
       status: false,
     });
   }
@@ -65,7 +65,7 @@ module.exports.loginUser = async (req, res) => {
     }
   } catch (err) {
     res.status(200).json({
-      message: err,
+      message: err.message,
       status: false,
     });
   }
@@ -78,16 +78,16 @@ module.exports.verifyUser = async (req, res) => {
     const verifyUser = await User.findById(id);
     console.log(verifyUser.verification_token == req.body.code);
     if (verifyUser.verification_token == req.body.code) {
-      console.log(1)
+      console.log(1);
       const result = await User.findOneAndUpdate(id, updateData);
-      
+
       res.status(200).json({
         message: "User verified Successfully",
         data: result,
         status: true,
       });
     } else {
-      console.log(2)
+      console.log(2);
       res.status(200).json({
         message: "User verification failed",
         status: false,
@@ -95,7 +95,7 @@ module.exports.verifyUser = async (req, res) => {
     }
   } catch (err) {
     res.status(200).json({
-      message: err,
+      message: err.message,
       status: false,
     });
   }
@@ -113,7 +113,7 @@ module.exports.updateUserInfo = async (req, res) => {
     });
   } catch (err) {
     res.status(200).json({
-      message: err,
+      message: err.message,
       status: false,
     });
   }
@@ -130,7 +130,7 @@ module.exports.getProfessionalUserDetails = async (req, res) => {
     });
   } catch (err) {
     res.status(200).json({
-      message: err,
+      message: err.message.message,
       status: false,
     });
   }
@@ -153,12 +153,11 @@ module.exports.getProfessionalUsers = async (req, res) => {
         currentPage: page,
       });
     } else {
-      console.log(expertise)
       const result = await User.find({ type_user: 1, expertise: expertise })
         .limit(limit * 1)
         .skip((page - 1) * limit)
         .exec();
-      const count = await User.countDocuments({ type_user: 1 });
+      const count = await User.countDocuments({ type_user: 1, expertise: expertise });
       res.status(200).json({
         message: "Professional Users fetched successfully",
         data: result,
@@ -169,11 +168,33 @@ module.exports.getProfessionalUsers = async (req, res) => {
     }
   } catch (err) {
     res.status(200).json({
-      message: err,
+      message: err.message.message,
       status: false,
     });
   }
 };
-// module.exports.getPasswordReset = async (req, res) =>{
+module.exports.getPasswordReset = async (req, res) => {};
 
-// }
+module.exports.postPasswordReset = async (req, res) => {
+  try {
+    const result = await User.findOne({ email: req.body.email });
+    if (result) {
+      sendPasswordReset(result.email, result.password, result.name);
+      res.status(200).json({
+        status: true,
+        message:
+          "¡Se ha enviado un correo electrónico de recuperación de contraseña a su cuenta!",
+      });
+    } else {
+      res.status(200).json({
+        status: false,
+        message: "¡Dirección de correo electrónico no válida!",
+      });
+    }
+  } catch (err) {
+    res.status(200).json({
+      message: err.message.message,
+      status: false,
+    });
+  }
+};

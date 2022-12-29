@@ -34,7 +34,7 @@ module.exports.getStripePayment = async (req, res) => {
     .catch((err) => {
       res.status(200).json({
         status: false,
-        message: err.message,
+        message: err.message.message,
       });
     });
 };
