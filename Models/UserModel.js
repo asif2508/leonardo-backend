@@ -80,6 +80,9 @@ const userSchema = new mongoose.Schema({
     },
     languages: {
         type: []
+    },
+    phone:{
+        type: String,
     }
 })
 

@@ -105,9 +105,9 @@ module.exports.updateUserInfo = async (req, res) => {
   try {
     const id = req.params.id;
     const updateData = req.body;
-    const result = await User.updateOne(id, updateData);
+    const result = await User.findOneAndUpdate(id, updateData)
     res.status(200).json({
-      message: "verifyUser",
+      message: "User informaion updated successfully",
       data: result,
       status: true,
     });
