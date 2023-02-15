@@ -48,3 +48,55 @@ module.exports.getAllOrders = async (req, res)=>{
         });
       }
 }
+
+module.exports.getOrderByUserId = async (req, res)=>{
+  try {
+      const id = req.params.id;
+      const result = await Orders.find({id_user: id}).sort({createdAt: -1});
+      res.status(200).json({
+        message: "Orders fetched Successfully",
+        data: result,
+        status: true,
+      });
+    } catch (err) {
+      res.status(200).json({
+        message: err.message,
+        status: false,
+      });
+    }
+}
+
+module.exports.deleteOrder = async (req, res) =>{
+  try {
+    const id = req.params.id;
+    const result = await Orders.findByIdAndDelete(id);
+    res.status(200).json({
+      message: "Orders fetched Successfully",
+      data: result,
+      status: true,
+    });
+  } catch (err) {
+    res.status(200).json({
+      message: err.message,
+      status: false,
+    });
+  }
+}
+
+module.exports.updateOrder = async (req, res) =>{
+  try {
+    const id = req.params.id;
+    const data = req.body;
+    const result = await Orders.findByIdAndUpdate(id, data);
+    res.status(200).json({
+      message: "Orders fetched Successfully",
+      data: result,
+      status: true,
+    });
+  } catch (err) {
+    res.status(200).json({
+      message: err.message,
+      status: false,
+    });
+  }
+}

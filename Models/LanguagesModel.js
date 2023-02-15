@@ -1,15 +1,20 @@
 const { default: mongoose } = require("mongoose");
 
-const languageSchema = new mongoose.Schema({
+const languageSchema = new mongoose.Schema(
+  {
     id_language: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     name_language: {
-        type: String,
-        required: true,
-    }
-})
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const Languages = mongoose.model("Languages", languageSchema);
 

@@ -1,11 +1,35 @@
 const Services = require("../Models/ServicesModel");
 
+module.exports.getAllServices = async (req, res) =>{
+  try {
+    const { limit, page } = req.query;
+    const result = await Services.find({}).sort({ createdAt: -1 })
+    .limit(limit * 1)
+    .skip((page - 1) * limit)
+    .exec();
+    const count = await Services.countDocuments({});
+
+    res.status(200).json({
+      message: "Services fetched Successfully",
+      data: result,
+      status: true,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
+  } catch (err) {
+    res.status(200).json({
+      message: err.message,
+      status: false,
+    });
+  }
+}
+
 module.exports.getService = async (req, res) => {
   try {
     const id = req.params.id;
-    const result = await Services.find({ id_user: id });
+    const result = await Services.find({ id_user: id, status: 'activo' });
     res.status(200).json({
-      message: "User info fetched Successful",
+      message: "Services fetched Successful",
       data: result,
       status: true,
     });
@@ -22,7 +46,7 @@ module.exports.getServiceById = async (req, res) => {
     const id = req.params.id;
     const result = await Services.findById(id);
     res.status(200).json({
-      message: "User info fetched Successful",
+      message: "Services fetched Successful",
       data: result,
       status: true,
     });
@@ -38,9 +62,10 @@ module.exports.updatedServices = async (req, res) => {
   try {
     const id = req.params.id;
     const updateData = req.body;
-    const result = await User.updateOne(id, updateData);
+    console.log(updateData)
+    const result = await Services.findByIdAndUpdate(id, updateData);
     res.status(200).json({
-      message: "User updated Successful",
+      message: "Service updated Successful",
       data: result,
       status: true,
     });
@@ -51,3 +76,100 @@ module.exports.updatedServices = async (req, res) => {
     });
   }
 };
+
+module.exports.addServices = async (req, res) => {
+  try {
+    const data = req.body;
+    const result = await Services.create(data);
+    if (result) {
+      res.status(200).json({
+        status: true,
+        result: result,
+        message: "Successfully Added the service",
+      });
+    } else {
+      res.status(200).json({
+        status: false,
+        message: "failed the service",
+      });
+    }
+  } catch (error) {
+    res.status(200).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports.getServicesByUserId = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const result = await Services.find({id_user: id});
+    if (result) {
+      res.status(200).json({
+        status: true,
+        result: result,
+        message: "Fetched All the services",
+      });
+    } else {
+      res.status(200).json({
+        status: false,
+        message: "Failed to fetched All the services",
+      });
+    }
+  } catch (error) {
+    res.status(200).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+
+module.exports.getServicesByUserIdAndStatus = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const result = await Services.find({id_user: id, status: 'Activo'});
+    if (result) {
+      res.status(200).json({
+        status: true,
+        result: result,
+        message: "Fetched All the services",
+      });
+    } else {
+      res.status(200).json({
+        status: false,
+        message: "Failed to fetched All the services",
+      });
+    }
+  } catch (error) {
+    res.status(200).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports.deleteService = async (req, res) =>{
+  try {
+    const id = req.params.id;
+    const result = await Services.findByIdAndDelete(id);
+    if (result) {
+      res.status(200).json({
+        status: true,
+        result: result,
+        message: "Service Deleted Successfully",
+      });
+    } else {
+      res.status(200).json({
+        status: false,
+        message: "Failed to delete the service",
+      });
+    }
+  } catch (error) {
+    res.status(200).json({
+      status: false,
+      message: error.message,
+    });
+  }
+}

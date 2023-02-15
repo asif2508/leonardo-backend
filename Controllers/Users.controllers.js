@@ -105,9 +105,11 @@ module.exports.updateUserInfo = async (req, res) => {
   try {
     const id = req.params.id;
     const updateData = req.body;
-    const result = await User.findOneAndUpdate(id, updateData)
+    console.log(updateData);
+    const result = await User.findByIdAndUpdate(id, updateData);
+    console.log(result);
     res.status(200).json({
-      message: "User informaion updated successfully",
+      message: "User information updated successfully",
       data: result,
       status: true,
     });
@@ -140,11 +142,17 @@ module.exports.getProfessionalUsers = async (req, res) => {
   const { page, limit, expertise } = req.query;
   try {
     if (expertise === "all") {
-      const result = await User.find({ type_user: 1 })
+      const result = await User.find({
+        type_user: 1,
+        professionalStatus: "Activo",
+      })
         .limit(limit * 1)
         .skip((page - 1) * limit)
         .exec();
-      const count = await User.countDocuments({ type_user: 1 });
+      const count = await User.countDocuments({
+        type_user: 1,
+        professionalStatus: "Activo",
+      });
       res.status(200).json({
         message: "Professional Users fetched successfully",
         data: result,
@@ -153,11 +161,19 @@ module.exports.getProfessionalUsers = async (req, res) => {
         currentPage: page,
       });
     } else {
-      const result = await User.find({ type_user: 1, expertise: expertise })
+      const result = await User.find({
+        type_user: 1,
+        expertise: expertise,
+        professionalStatus: "Activo",
+      })
         .limit(limit * 1)
         .skip((page - 1) * limit)
         .exec();
-      const count = await User.countDocuments({ type_user: 1, expertise: expertise });
+      const count = await User.countDocuments({
+        type_user: 1,
+        expertise: expertise,
+        professionalStatus: "Activo",
+      });
       res.status(200).json({
         message: "Professional Users fetched successfully",
         data: result,
@@ -191,6 +207,79 @@ module.exports.postPasswordReset = async (req, res) => {
         message: "¡Dirección de correo electrónico no válida!",
       });
     }
+  } catch (err) {
+    res.status(200).json({
+      message: err.message.message,
+      status: false,
+    });
+  }
+};
+
+module.exports.getAllProfessionalUsers = async (req, res) => {
+  const { limit, page } = req.query;
+  try {
+    const result = await User.find({ type_user: 1 })
+      .sort({ createdAt: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .exec();
+    const count = await User.countDocuments({ type_user: 1 });
+    res.status(200).json({
+      message: "Professional Users fetched successfully",
+      data: result,
+      status: true,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
+  } catch (err) {
+    res.status(200).json({
+      message: err.message.message,
+      status: false,
+    });
+  }
+};
+
+module.exports.deleteUser = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const result = await User.findByIdAndDelete(id);
+    if (result) {
+      res.status(200).json({
+        message: "User deleted successfully",
+        data: result,
+        status: true,
+      });
+    } else {
+      res.status(200).json({
+        message: "Failed to delete the user",
+        status: false,
+      });
+    }
+  } catch (error) {
+    res.status(200).json({
+      message: err.message.message,
+      status: false,
+    });
+  }
+};
+
+module.exports.getAllUsers = async (req, res) => {
+  const { limit, page } = req.query;
+  try {
+    const result = await User.find({ type_user: 0 })
+      .sort({ createdAt: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .exec();
+
+    const count = await User.countDocuments({ type_user: 0 });
+    res.status(200).json({
+      message: "Users fetched successfully",
+      data: result,
+      status: true,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
   } catch (err) {
     res.status(200).json({
       message: err.message.message,

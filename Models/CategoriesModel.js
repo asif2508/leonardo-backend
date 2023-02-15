@@ -1,15 +1,20 @@
 const { default: mongoose } = require("mongoose");
 
-const categoriesSchema = new mongoose.Schema({
+const categoriesSchema = new mongoose.Schema(
+  {
     id_category: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
-    name_category:{
-        type: String,
-        required: true,
-    }
-})
+    name_category: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const Categories = mongoose.model("Categories", categoriesSchema);
 
