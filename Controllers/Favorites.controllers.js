@@ -65,26 +65,14 @@ module.exports.getAllFavoritesById = async (req, res) => {
 module.exports.getAllFavoritesByUserId = async (req, res) => {
   try {
     const id = req.params.id;
-    const data = await favorites.find({ id_user: id });
+    const data = await favorites.find({ id_user: id }).populate('id_professional');
     // console.log(data)
     if (data) {
-      const userIds = [];
-      for (const i of data) {
-        userIds.push(i.id_professional);
-      }
-      const promises = userIds.map((userId) => {
-        return User.findById(userId).exec();
+      res.status(200).json({
+        message: "favorites fetched successfully",
+        data: data,
+        status: false,
       });
-
-      Promise.all(promises)
-        .then((users) => {
-          res.status(200).json({
-            message: "favorites fetched successfully",
-            data: users,
-            status: false,
-          });
-        })
-        .catch((err) => res.status(500).send("Error retrieving users"));
     } else {
       res.status(200).json({
         message: "Failed to fetch",
@@ -102,9 +90,12 @@ module.exports.getAllFavoritesByUserId = async (req, res) => {
 module.exports.deleteFavorite = async (req, res) =>{
   try {
     const id = req.params.id.split(",");
-    const result = await favorites.findOneAndDelete({id_user: id[0],
-      id_professional: id[1]});
+    console.log(id)
+    const result = await favorites.findByIdAndDelete(id[1]);
     if (result) {
+      const user = await User.findById(id[0]);
+      user?.favorites?.pull(id[0]),
+      await user.save();
       res.status(200).json({
         status: true,
         result: result,

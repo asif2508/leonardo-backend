@@ -25,14 +25,3 @@ const upload = multer({
 
 module.exports = upload;
 
-// app.post('/upload', upload.single('profilePicture'), (req, res, next) => {
-//     if (!req.file) {
-//       const error = new Error('Please upload a file');
-//       error.code = 'NO_FILE_UPLOADED';
-//       return next(error);
-//     }
-//     res.json({
-//       file: req.file
-//     });
-//   });
-  

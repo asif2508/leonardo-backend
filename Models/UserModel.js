@@ -65,7 +65,8 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     path_profile_picture: {
-      type: String,
+      data: Buffer,
+      contentType: String,
     },
     expertise: {
       type: [String],
@@ -79,9 +80,18 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
     },
-    professionalStatus:{
+    professionalStatus: {
       type: String,
-    }
+    },
+   rating_given: {
+      type: Number,
+    },
+    rating_received: {
+      type: Number,
+    },
+    rating_total: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

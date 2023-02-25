@@ -7,8 +7,9 @@ const paymentRouter = require("./Routes/v1/Payment.routes")
 const orderRouter = require("./Routes/v1/Orders.route")
 const availableTimeRouter =  require("./Routes/v1/AvailableTime.route"); 
 const favoriteRouter = require('./Routes/v1/Favorites.route')
+const reviewsRouter = require('./Routes/v1/Reviews.Routes')
 // middlewares
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 app.use(cors());
 
 
@@ -22,6 +23,7 @@ app.use('/api/v1/services', serviceRouter)
 app.use('/api/v1/payment', paymentRouter)
 app.use('/api/v1/orders', orderRouter)
 app.use('/api/v1/favorite', favoriteRouter)
+app.use('/api/v1/reviews', reviewsRouter)
 // Available time api route
 app.use('/api/v1/availableTime', availableTimeRouter)
 

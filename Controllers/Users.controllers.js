@@ -287,3 +287,30 @@ module.exports.getAllUsers = async (req, res) => {
     });
   }
 };
+
+// upload profile picture
+
+module.exports.uploadProfile = async (req, res, next) => {
+  const id = req.params.id;
+  // if (!req.body) {
+  //   const error = new Error("Please upload a file");
+  //   error.code = "NO_FILE_UPLOADED";
+  //   return next(error);
+  // } else {
+  // const base64Data = req.body.image.replace(/^data:image\/\w+;base64,/, "");
+  // const buffer = Buffer.from(base64Data, "base64");
+  // const newImage = new Image({
+  //   data: buffer,
+  //   contentType: "image/png", // replace with actual content type
+  // });
+  console.log(req.body);
+  const result = await User.findByIdAndUpdate(id, {path_profile_picture: req.body.image});
+  console.log(result);
+  res.status(200).json({
+    message: "User information updated successfully",
+    data: result,
+    status: true,
+  });
+  // }
+  // console.log(req.body)
+};
