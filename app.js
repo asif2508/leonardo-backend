@@ -12,7 +12,7 @@ const reviewsRouter = require('./Routes/v1/Reviews.Routes')
 app.use(express.json({ limit: '50mb' }));
 app.use(cors());
 
-
+console.log("1")
 app.get("/", (req, res) => {
   res.send("Route is working!");
 });

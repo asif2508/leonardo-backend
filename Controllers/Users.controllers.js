@@ -161,6 +161,7 @@ module.exports.getProfessionalUsers = async (req, res) => {
         currentPage: page,
       });
     } else {
+      console.log
       const result = await User.find({
         type_user: 1,
         expertise: expertise,

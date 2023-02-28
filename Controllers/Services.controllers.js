@@ -1,4 +1,5 @@
 const Services = require("../Models/ServicesModel");
+const User = require("../Models/UserModel");
 
 module.exports.getAllServices = async (req, res) =>{
   try {
@@ -63,12 +64,33 @@ module.exports.updatedServices = async (req, res) => {
     const id = req.params.id;
     const updateData = req.body;
     console.log(updateData)
+    console.log("Hello")
     const result = await Services.findByIdAndUpdate(id, updateData);
-    res.status(200).json({
-      message: "Service updated Successful",
-      data: result,
-      status: true,
-    });
+    console.log(result)
+    if(result && updateData.status === 'Activo'){
+      console.log("hello1")
+      const data = await User.findByIdAndUpdate(result?.id_user, {professionalStatus: 'Activo'})
+      console.log(data)
+      res.status(200).json({
+        message: "Service updated Successful",
+        data: data,
+        status: true,
+      });
+    }
+    if(result && updateData.status !== 'Activo'){
+      const resultData = await Services.find({id_user: result?.id_user, professionalStatus: 'Activo'});
+      console.log(resultData)
+      if(resultData.length === 1){
+        const data = await User.findByIdAndUpdate(result?.id_user, {professionalStatus: 'Terminado'})
+        console.log(data)
+        res.status(200).json({
+          message: "Service updated Successful",
+          data: data,
+          status: true,
+        });
+      }
+      
+    }
   } catch (err) {
     res.status(200).json({
       message: err.message,
