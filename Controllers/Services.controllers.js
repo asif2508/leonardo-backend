@@ -66,11 +66,11 @@ module.exports.updatedServices = async (req, res) => {
     console.log(updateData)
     console.log("Hello")
     const result = await Services.findByIdAndUpdate(id, updateData);
-    console.log(result)
+    // console.log(result)
     if(result && updateData.status === 'Activo'){
       console.log("hello1")
       const data = await User.findByIdAndUpdate(result?.id_user, {professionalStatus: 'Activo'})
-      console.log(data)
+      // console.log(data)
       res.status(200).json({
         message: "Service updated Successful",
         data: data,
@@ -79,10 +79,10 @@ module.exports.updatedServices = async (req, res) => {
     }
     if(result && updateData.status !== 'Activo'){
       const resultData = await Services.find({id_user: result?.id_user, professionalStatus: 'Activo'});
-      console.log(resultData)
+      // console.log(resultData)
       if(resultData.length === 1){
         const data = await User.findByIdAndUpdate(result?.id_user, {professionalStatus: 'Terminado'})
-        console.log(data)
+        // console.log(data)
         res.status(200).json({
           message: "Service updated Successful",
           data: data,

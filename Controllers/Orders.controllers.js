@@ -3,6 +3,7 @@ const Orders = require("../Models/OrdersModel");
 module.exports.addOrders = async (req, res) => {
   try {
     const data = req.body;
+
     const result = await Orders.create(data);
     console.log(result);
     res.status(200).json({
@@ -53,7 +54,12 @@ module.exports.getOrderByUserId = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const result = await Orders.find({ id_user: id, sessionStatus: {$in : ["Pending", "Missed", "Canceled"]} }).sort({ createdAt: -1 });
+    const result = await Orders.find({
+      id_user: id,
+      sessionStatus: { $in: ["Pending", "Missed", "Canceled"] },
+    })
+      .sort({ createdAt: -1 })
+      .populate("id_professional");
     res.status(200).json({
       message: "Orders fetched Successfully",
       data: result,
@@ -67,12 +73,41 @@ module.exports.getOrderByUserId = async (req, res) => {
   }
 };
 
+module.exports.getOrderByProfessionalId = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const result = await Orders.find({
+      id_professional: id,
+      sessionStatus: { $in: ["Pending", "Missed", "Canceled"] },
+    })
+      .sort({ createdAt: -1 })
+      .populate("id_user");
+    console.log(result);
+    res.status(200).json({
+      message: "Orders fetched Successfully",
+      data: result,
+      status: true,
+    });
+  } catch (err) {
+    res.status(200).json({
+      message: err.message,
+      status: false,
+    });
+  }
+};
 
 module.exports.getCompletedOrders = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const result = await Orders.find({ id_user: id, sessionStatus: {$in : ["Rated", "Completed", "Pending", "Missed", "Canceled"]} }).sort({updatedAt: -1 ,createdAt: -1 });
+    const result = await Orders.find({
+      id_user: id,
+      sessionStatus: {
+        $in: ["Rated", "Completed", "Pending", "Missed", "Canceled"],
+      },
+    }).sort({ updatedAt: -1, createdAt: -1 });
+
     res.status(200).json({
       message: "Orders fetched Successfully",
       data: result,
@@ -86,6 +121,32 @@ module.exports.getCompletedOrders = async (req, res) => {
   }
 };
 
+module.exports.upcomingOrder = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const result = await Orders.find({
+      id_professional: id,
+      GMT:  {$gte: new Date()} ,
+    }).populate('id_user');
+    const counter = await Orders.count({
+      id_professional: id,
+      sessionStatus: {
+        $in: ["Rated", "Completed", "Pending"],
+      },
+    });
+    res.status(200).json({
+      message: "Orders fetched Successfully",
+      data: {result, counter},
+      status: true,
+      
+    });
+  } catch (err) {
+    res.status(200).json({
+      message: err.message,
+      status: false,
+    });
+  }
+};
 module.exports.deleteOrder = async (req, res) => {
   try {
     const id = req.params.id;
@@ -107,9 +168,9 @@ module.exports.updateOrder = async (req, res) => {
   try {
     const id = req.params.id;
     const data = req.body;
-    console.log(id)
+    console.log(id);
     const result = await Orders.findByIdAndUpdate(id, data);
-    console.log(result)
+    console.log(result);
     res.status(200).json({
       message: "Orders fetched Successfully",
       data: result,

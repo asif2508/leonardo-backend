@@ -1,18 +1,19 @@
 const { default: mongoose } = require("mongoose");
+const { ObjectId } = mongoose.Schema.Types;
 
 const ordersSchema = new mongoose.Schema(
   {
     id_service: {
-      type: String,
-      required: true,
+      type: ObjectId,
+      ref:'Services',
     },
     id_professional: {
-      type: String,
-      required: true,
+      type: ObjectId,
+      ref:'User'
     },
     id_user: {
-      type: String,
-      required: true,
+      type: ObjectId,
+      ref:'User'
     },
     customer_id: {
       type: String,
